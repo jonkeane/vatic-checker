@@ -1,6 +1,7 @@
-localhost      = "http://localhost/" # your local host
-database       = "mysql://root@localhost/vaticChecker" # server://user:pass@localhost/dbname
-min_training   = 2  # the minimum number of training videos to be considered
+localhost        = "http://localhost/" # your local host
+database         = "mysql://root@localhost/vaticChecker" # server://user:pass@localhost/dbname
+min_training     = 2  # the minimum number of training videos to be considered
+recaptcha_secret = "" # recaptcha secret for verification
 
 import os.path
 import sys
