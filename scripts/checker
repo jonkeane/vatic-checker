@@ -1,0 +1,18 @@
+#!/usr/bin/python
+
+import os, sys
+cwd = os.getcwd()
+sys.path.append(cwd)
+
+try:
+    import config
+# except ImportError:
+#     # if there is no config file in the current directory, load the installed one
+#     try:
+#         import vatic_checker.config
+except ImportError:
+    pass
+
+import vatic_checker.cli
+
+vatic_checker.cli.main()

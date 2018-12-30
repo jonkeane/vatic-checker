@@ -1,0 +1,13 @@
+import server
+
+import json, re, datetime, uuid, cStringIO, logging
+from sqlalchemy import and_, func, distinct, desc
+from sqlalchemy.orm import aliased
+from sqlalchemy.orm.exc import NoResultFound
+from handler import handler, application
+from database import session
+import model
+
+user = session.query(model.User).filter(model.User.guid == '87599456d52b48b78a6b1b5b0ded7be1').one()
+
+server.check_training_completion(user, 3)

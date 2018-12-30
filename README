@@ -1,0 +1,15 @@
+# Vatic checker
+A simple web application that displays videos, and allows users to annotate them. It borrows heavily from [vatic](https://github.com/cvondrick/vatic) (especially the video interface), but does not connect to or use Amazon's Mechanical Turk at all.
+
+# Setup
+To install, `pip` should install all of the dependencies (though you will need to install ffmpeg separately)
+
+```
+pip install ./vatic-checker
+```
+
+# Configuration
+Then you can use `checker init directory` to install a directory to server from. Edit `directory/config.py appropriately` as appropriate. Then edit and move `http.conf` to the correct directory for your system.
+
+# Checker commands
+TBD
