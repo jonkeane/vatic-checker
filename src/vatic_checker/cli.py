@@ -540,7 +540,7 @@ class export(object):
             model.Video.label,
             model.Video.video_path,
             model.Video.num_frames
-            )
+            ).filter(anno_table.video_id == model.Video.id)
 
         annos = annotations.all()
 
