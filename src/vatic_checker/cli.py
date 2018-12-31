@@ -564,7 +564,7 @@ class export(object):
 
         print "Exported {0} annotations".format(annotations.count())
 
-@handler("Takes a csv of data clips the videos, then imports it")
+@handler("Takes a csv of data clips the videos and then imports it")
 class importcsv(object):
     def __init__(self, args):
         args = self.setup().parse_args(args)
