@@ -578,10 +578,6 @@ class importcsv(object):
         return parser
 
     def __call__(self, args):
-        if (args.training):
-            # todo: change the actions here
-            training = True
-
         video_csv = []
         input_file = csv.DictReader(open(args.filename))
         for row in input_file:
