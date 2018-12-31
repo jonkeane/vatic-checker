@@ -587,10 +587,6 @@ class importcsv(object):
         for row in input_file:
             video_csv.append(row)
 
-        # ensure filenames do not have slashes in them.
-        for i in range(len(video_csv)):
-            video_csv[i]['Filename'] = video_csv[i]['Filename'].replace('/', '_')
-
         # check that the csv object has all of the necesary columns.
         for clip in video_csv:
             columns = ['Filename',
@@ -608,6 +604,13 @@ class importcsv(object):
                 print("End Time - msec: The time that the fingerspelling ends (in milliseconds)")
                 print("Label: The label that was annotated by MTurkers. If these videos will be used for training, this is also the gold-standard label an annotator must get to be considered trained.")
                 return
+
+        # ensure filenames do not have slashes in them.
+        for i in range(len(video_csv)):
+            video_csv[i]['Filename'] = video_csv[i]['Filename'].replace('/', '_')
+
+        # TODO: ensure that the names are unique (because they will all be
+        # stored in the same frame location if not)
 
         # make a clips directory
         try:
