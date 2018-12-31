@@ -31,11 +31,13 @@ class extract(object):
         self.key = "pyvision-ffmpeg-{0}".format(self.key)
         self.output = "/tmp/{0}".format(self.key)
         self.path = path
-        try:
-            os.makedirs(self.output)
-        except:
-            pass
-
+        # try:
+        #     os.makedirs(self.output)
+        # except:
+        #     pass
+        os.makedirs(self.output)
+        print("here!")
+        print(self.output)
         if which("ffmpeg") is not None:
             cmd = "ffmpeg -i {0} -b 10000k".format(path)
         else:
@@ -45,6 +47,7 @@ class extract(object):
         if size:
             w, h = size
             cmd = "{0} -s {1}x{2}".format(cmd, int(w), int(h))
+        print("{0} {1}/%d.jpg".format(cmd, self.output))
         os.system("{0} {1}/%d.jpg".format(cmd, self.output))
 
     def __del__(self):
@@ -67,3 +70,22 @@ class extract(object):
     def __iter__(self):
         for i in range(len(self)):
             yield self[i]
+
+class clip(object):
+    def __init__(self, source_path, start, end, output_path):
+        try:
+            os.makedirs(self.output)
+        except:
+            pass
+
+        start = start/1000.
+        end = end/1000.
+
+        duration = end - start
+
+        if which("ffmpeg") is not None:
+            cmd = "ffmpeg -y -i '{0}' -vcodec h264 -crf 18 -an -ss {1} -t {2} '{3}.mp4'".format(
+                source_path, start, duration, output_path)
+        else:
+            print("Not sure how to use avconv")
+        os.system(cmd)

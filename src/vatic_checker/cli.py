@@ -252,7 +252,7 @@ class extract(Command):
         except:
             pass
 
-	sequence = ffmpeg.extract(args.video)
+        sequence = ffmpeg.extract(args.video)
         try:
             for frame, image in enumerate(sequence):
                 if frame % 100 == 0:
@@ -260,7 +260,7 @@ class extract(Command):
                         .format(frame, frame + 100))
                 if not args.no_resize:
                     image.thumbnail((args.width, args.height), Image.BILINEAR)
-                path = self.table.getframepath(frame, args.output)
+                path = model.Video.getframepath(frame, args.output)
                 try:
                     image.save(path)
                 except IOError:
@@ -563,3 +563,70 @@ class export(object):
                 csv_out.writerow(row)
 
         print "Exported {0} annotations".format(annotations.count())
+
+@handler("Takes a csv of data clips the videos, then imports it")
+class importcsv(object):
+    def __init__(self, args):
+        args = self.setup().parse_args(args)
+
+        self(args)
+
+    def setup(self):
+        parser = argparse.ArgumentParser(add_help=False)
+        parser.add_argument("filename")
+        parser.add_argument("--training", default=False, action="store_true")
+        return parser
+
+    def __call__(self, args):
+        if (args.training):
+            # todo: change the actions here
+            training = True
+
+        video_csv = []
+        input_file = csv.DictReader(open(args.filename))
+        for row in input_file:
+            video_csv.append(row)
+
+        # ensure filenames do not have slashes in them.
+        for i in range(len(video_csv)):
+            video_csv[i]['Filename'] = video_csv[i]['Filename'].replace('/', '_')
+
+        # make a clips directory
+        try:
+            os.mkdir("./clips")
+        except OSError:
+            # might already exist, so try anyway
+            pass
+
+        # first, we need to clip the videos
+        print("Clipping videos into just the fingerspelled segments...")
+        for clip in video_csv:
+            ffmpeg.clip(source_path = clip['Video Path'],
+                        start = int(clip['Begin Time - msec']),
+                        end = int(clip['End Time - msec']),
+                        output_path = os.path.join("./clips", clip['Filename']))
+
+        # extract frames
+        print("Extracting frames from the clips...")
+        for clip in video_csv:
+            extract([os.path.join("./clips", clip['Filename'] + ".mp4"),
+                     os.path.join("./frames", clip['Filename']),
+            ])
+
+        # load videos
+        for clip in video_csv:
+            duration = int(clip['End Time - msec']) - int(clip['Begin Time - msec'])
+            # setup arguments for load
+            load_args = [os.path.join('./frames', clip['Filename']),
+                    "--name", clip['Filename'], # name
+                    "--video_path", clip['Video Path'], # video_path
+                    "--start", clip['Begin Time - msec'], # start
+                    "--end", clip['End Time - msec'], # end
+                    "--duration", str(duration), # duration
+                    "--label", clip['Label'] # label
+                    ]
+            if (args.training):
+                load_args.append("--fortraining")
+            load(load_args)
+
+        print ("Completed loading from {0}".format(args.filename))
