@@ -660,5 +660,4 @@ class importcsv(object):
                 load_args.append("--fortraining")
             load(load_args)
 
-
         print ("Completed loading from {0}".format(args.filename))

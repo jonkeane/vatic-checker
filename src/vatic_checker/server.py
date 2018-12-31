@@ -101,7 +101,7 @@ def getNextLeastAnnoedVideo(user):
     # if there is a tie, then get the newt least annotated video.
     # count_1 = annos_current_user
     # count_2 = total_annos
-    videos = videos.order_by('count_1', 'count_2')
+    videos = videos.order_by('count_1', 'count_2', func.rand())
 
     try:
         video = videos.first()
@@ -137,8 +137,8 @@ def getNextTrainingVideo(user):
                    model.Training.user_guid == user_guid)).\
     filter(model.Training.success == None)
 
-    # TODO: randomize
-    # training_videos = training_videos.order_by('count_1', 'count_2')
+    # randomize
+    training_videos = training_videos.order_by(func.rand())
 
     try:
         training_videos = training_videos.first()
