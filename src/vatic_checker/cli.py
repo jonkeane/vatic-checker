@@ -609,6 +609,11 @@ class importcsv(object):
         for i in range(len(video_csv)):
             video_csv[i]['Filename'] = video_csv[i]['Filename'].replace('/', '_')
 
+        # ensure paths have their ' and " quoted
+        for i in range(len(video_csv)):
+            video_csv[i]['Video Path'] = video_csv[i]['Video Path'].replace('"', '\"')
+            video_csv[i]['Video Path'] = video_csv[i]['Video Path'].replace("'", "\'")
+
         # TODO: ensure that the names are unique (because they will all be
         # stored in the same frame location if not)
 
