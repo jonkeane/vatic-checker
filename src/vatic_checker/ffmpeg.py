@@ -82,7 +82,7 @@ class clip(object):
         duration = end - start
 
         if which("ffmpeg") is not None:
-            cmd = "ffmpeg -y -i '{0}' -vcodec h264 -crf 18 -an -ss {1} -t {2} '{3}.mp4'".format(
+            cmd = 'ffmpeg -y -i "{0}" -vcodec h264 -crf 18 -an -ss {1} -t {2} "{3}.mp4"'.format(
                 source_path, start, duration, output_path)
         else:
             print("Not sure how to use avconv")
