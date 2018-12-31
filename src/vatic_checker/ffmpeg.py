@@ -31,13 +31,11 @@ class extract(object):
         self.key = "pyvision-ffmpeg-{0}".format(self.key)
         self.output = "/tmp/{0}".format(self.key)
         self.path = path
-        # try:
-        #     os.makedirs(self.output)
-        # except:
-        #     pass
-        os.makedirs(self.output)
-        print("here!")
-        print(self.output)
+        try:
+            os.makedirs(self.output)
+        except:
+            pass
+
         if which("ffmpeg") is not None:
             cmd = "ffmpeg -i {0} -b 10000k".format(path)
         else:

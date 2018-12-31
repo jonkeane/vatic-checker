@@ -591,6 +591,24 @@ class importcsv(object):
         for i in range(len(video_csv)):
             video_csv[i]['Filename'] = video_csv[i]['Filename'].replace('/', '_')
 
+        # check that the csv object has all of the necesary columns.
+        for clip in video_csv:
+            columns = ['Filename',
+                       'Video Path',
+                       'Begin Time - msec',
+                       'End Time - msec',
+                       'Label']
+            has_columns = [x in video_csv[0].keys() for x in columns]
+            if all(has_columns) != True:
+                # If any of the rows don't have the correct columns, error and return
+                print("The csv does not have all of the necesary columns. The needed columns are case-sensitive, must include the spaces, and are called:")
+                print("Filename: The name of the file (this will be used to identify the clip)")
+                print("Video Path: The path to the video file, from which the clip should be extracted")
+                print("Begin Time - msec: The time that the fingerspelling starts (in milliseconds)")
+                print("End Time - msec: The time that the fingerspelling ends (in milliseconds)")
+                print("Label: The label that was annotated by MTurkers. If these videos will be used for training, this is also the gold-standard label an annotator must get to be considered trained.")
+                return
+
         # make a clips directory
         try:
             os.mkdir("./clips")
@@ -598,23 +616,29 @@ class importcsv(object):
             # might already exist, so try anyway
             pass
 
-        # first, we need to clip the videos
-        print("Clipping videos into just the fingerspelled segments...")
         for clip in video_csv:
+            # check if the all of the files exists, error gracefully otherwise
+            if os.path.isfile(clip['Video Path']) != True:
+                print("The video for the following row couldn't be accessed:")
+                print(clip['Video Path'])
+                print("Please check and make sure this path exists and is reachable.")
+                print(clip)
+                return
+
+        # first, we need to clip the videos
+        for clip in video_csv:
+            print("Clipping {0} into just the fingerspelled segments...".format(clip['Filename']))
             ffmpeg.clip(source_path = clip['Video Path'],
                         start = int(clip['Begin Time - msec']),
                         end = int(clip['End Time - msec']),
                         output_path = os.path.join("./clips", clip['Filename']))
 
-        # extract frames
-        print("Extracting frames from the clips...")
-        for clip in video_csv:
+            print("Extracting frames from the clip...")
             extract([os.path.join("./clips", clip['Filename'] + ".mp4"),
                      os.path.join("./frames", clip['Filename']),
             ])
 
-        # load videos
-        for clip in video_csv:
+            print("Loading the clip into vatic-checker...")
             duration = int(clip['End Time - msec']) - int(clip['Begin Time - msec'])
             # setup arguments for load
             load_args = [os.path.join('./frames', clip['Filename']),
@@ -628,5 +652,6 @@ class importcsv(object):
             if (args.training):
                 load_args.append("--fortraining")
             load(load_args)
+
 
         print ("Completed loading from {0}".format(args.filename))
