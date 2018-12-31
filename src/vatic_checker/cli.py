@@ -5,7 +5,7 @@ To use this module, decorate functions with the 'handler' decorator. Then, call
 with 'checker [command] [arguments]' from the shell.
 """
 
-import sys, os, shutil, glob, argparse, urllib2, uuid
+import sys, os, shutil, glob, argparse, urllib2, uuid, csv
 import database
 import ffmpeg
 import model
@@ -508,3 +508,58 @@ class deleteuser(object):
         session.commit()
 
         print "The user {0} has been deleted".format(args.username)
+
+@handler("Exports data")
+class export(object):
+    def __init__(self, args):
+        args = self.setup().parse_args(args)
+
+        self(args)
+
+    def setup(self):
+        parser = argparse.ArgumentParser(add_help=False)
+        parser.add_argument("filename")
+        parser.add_argument("--training", default=False, action="store_true")
+        return parser
+
+    def __call__(self, args):
+        anno_table = model.Annotation
+        if (args.training):
+            anno_table = model.Training
+
+        annotations = session.query(
+            anno_table.id,
+            anno_table.text,
+            anno_table.timestamp,
+            model.Video.id,
+            model.Video.path,
+            model.Video.name,
+            model.Video.duration,
+            model.Video.start,
+            model.Video.end,
+            model.Video.label,
+            model.Video.video_path,
+            model.Video.num_frames
+            )
+
+        annos = annotations.all()
+
+        with open(args.filename,'wb') as out:
+            csv_out=csv.writer(out)
+            csv_out.writerow(['annotation_id',
+                              'annotation_text',
+                              'annotation_timestamp',
+                              'video_id',
+                              'video_path',
+                              'video_name',
+                              'video_duration',
+                              'video_start',
+                              'video_end',
+                              'video_label',
+                              'video_video_path',
+                              'video_num_frames'
+                              ])
+            for row in annos:
+                csv_out.writerow(row)
+
+        print "Exported {0} annotations".format(annotations.count())
