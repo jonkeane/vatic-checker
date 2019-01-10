@@ -528,6 +528,7 @@ class export(object):
             anno_table = model.Training
 
         annotations = session.query(
+            model.User.username,
             anno_table.id,
             anno_table.text,
             anno_table.timestamp,
@@ -540,13 +541,14 @@ class export(object):
             model.Video.label,
             model.Video.video_path,
             model.Video.num_frames
-            ).filter(anno_table.video_id == model.Video.id)
+            ).filter(anno_table.video_id == model.Video.id).filter(anno_table.user_guid == model.User.guid)
 
         annos = annotations.all()
 
         with open(args.filename,'wb') as out:
             csv_out=csv.writer(out)
-            csv_out.writerow(['annotation_id',
+            csv_out.writerow(['annotator_username',
+                              'annotation_id',
                               'annotation_text',
                               'annotation_timestamp',
                               'video_id',
