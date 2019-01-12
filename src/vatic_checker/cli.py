@@ -5,7 +5,14 @@ To use this module, decorate functions with the 'handler' decorator. Then, call
 with 'checker [command] [arguments]' from the shell.
 """
 
-import sys, os, shutil, glob, argparse, urllib2, uuid, csv
+from future.standard_library import install_aliases
+install_aliases()
+
+from urllib.parse import urlparse, urlencode
+from urllib.request import urlopen, Request
+from urllib.error import HTTPError
+
+import sys, os, shutil, glob, argparse, uuid, csv, urllib
 import database
 import ffmpeg
 import model

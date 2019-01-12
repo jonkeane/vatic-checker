@@ -1,7 +1,14 @@
 import os.path, sys
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-import json, re, datetime, uuid, cStringIO, logging, urllib, urllib2
+from future.standard_library import install_aliases
+install_aliases()
+
+from urllib.parse import urlparse, urlencode
+from urllib.request import urlopen, Request
+from urllib.error import HTTPError
+
+import json, re, datetime, uuid, cStringIO, logging, urllib
 from sqlalchemy import and_, func, distinct, desc
 from sqlalchemy.orm import aliased
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
