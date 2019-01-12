@@ -1,7 +1,7 @@
 # Vatic checker
-A simple web application that displays videos, and allows users to annotate them. It borrows heavily from [vatic](https://github.com/cvondrick/vatic) (especially the video interface), but does not connect to or use Amazon's Mechanical Turk at all.
+A simple web application that displays videos and allows users to annotate them. It borrows heavily from [vatic](https://github.com/cvondrick/vatic) (especially the video interface), but does not connect to or use Amazon's Mechanical Turk at all.
 
-`vatic-checker` Allows for training clips that must be matched exactly before an annotator is allowed to continue on with annotating other clips. Once they have completed training, they will be presented with a video to annotate. The video they are given is determined using the following hierarchy: 1. has the current user annotated this video, 2. has any other user annotated this video, 3. random after that. In other words: videos that the current annotator and no other annotator has never annotated are preferred, then there are videos that others have annotated but the current annotator has not, and then which video that meet those criteria are randomized. This will maximize coverage while still allowing annotators to contribute more annotations to overlap for consistency checking within and across annotators.
+`vatic-checker` allows for training clips that must be annotated exactly correctly before an annotator is allowed to continue on with annotating other clips. Once they have completed training, they will be presented with a video to annotate. The video they are given is determined using the following hierarchy: 1. has the current user annotated this video, 2. has any other user annotated this video, 3. random after that. In other words: videos that the current annotator and no other annotator has never annotated are preferred most highly, then there are videos that others have annotated but the current annotator has not are preferred, and then which videos that meet those criteria are randomized within each group. This will maximize coverage while still allowing annotators to contribute more annotations to overlap for consistency checking within and across annotators.
 
 # Setup
 To install, `pip` should install all of the dependencies (though you will need to install ffmpeg separately)
@@ -78,3 +78,14 @@ This csv must have the following columns:
 
 # Export data
 To export the data you can generate a csv with all of the relevant video data, as well as the annotations from the annotators using `checker export file.csv`. This makes a csv where each row is an annotation from a specific user for a specific video. Videos may have more than one annotation if multiple annotators annotated for the same video (or possibly even have multiple annotations from the same annotator if they have annotated it multiple times).
+
+
+# Development
+
+To install for development or to run tests, `pip` should install all of the dependencies (though you will need to install ffmpeg separately)
+
+```
+pip install ./vatic-checker[testing]
+```
+
+Then you can run tests with `pytest .`
