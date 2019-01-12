@@ -46,12 +46,12 @@ If you already have the videos you want to load in a csv format, you can use tha
 
 `checker importcsv [/path/to/training.csv] --training`
 
-This csv must have the following columns:
-* Filename – The name to be used in the system. This must be unique among all videos being annotated.
-* Video Path – a path to the video file that will be used. This path must be accessible to the system and user you are running `checker` as for the video to be extracted.
-* Begin Time - msec – the number of milliseconds into the larger clip that the fingerspelling started.
-* End Time - msec – the number of milliseconds into the larger clip that the fingerspelling ended.
-* Label – the label that must be matched for the training to be considered successful. 
+This csv must have the following columns. The columns are case sensitive and it matters if you have even minor differences in whitespace:
+* `Filename` – The name to be used in the system. This must be unique among all videos being annotated.
+* `Video Path` – a path to the video file that will be used. This path must be accessible to the system and user you are running `checker` as for the video to be extracted.
+* `Begin Time - msec` – the number of milliseconds into the larger clip that the fingerspelling started.
+* `End Time - msec` – the number of milliseconds into the larger clip that the fingerspelling ended.
+* `Label` – the label that must be matched for the training to be considered successful. 
 
 # Add clips to annotate
 You can use the `checker load` command followed by a number of arguments to add one video to be annotated at a time. To use this, you must already have turned the video into frames using the `checker extract` command on the small clip that includes only the fingerspelling. Any of the paths can be quoted in case they include spaces or other characters that might impact bash argument parsing
@@ -69,12 +69,12 @@ If you already have the videos you want to load in a csv format, you can use tha
 
 `checker importcsv [/path/to/videos.csv]`
 
-This csv must have the following columns:
-* Filename – The name to be used in the system. This must be unique among all videos being annotated.
-* Video Path – a path to the video file that will be used. This path must be accessible to the system and user you are running `checker` as for the video to be extracted.
-* Begin Time - msec – the number of milliseconds into the larger clip that the fingerspelling started.
-* End Time - msec – the number of milliseconds into the larger clip that the fingerspelling ended.
-* Label – the label associated with the video if there is one (if there is none, this must still exist, but can be left as "").
+This csv must have the following columns. The columns are case sensitive and it matters if you have even minor differences in whitespace:
+* `Filename` – The name to be used in the system. This must be unique among all videos being annotated.
+* `Video Path` – a path to the video file that will be used. This path must be accessible to the system and user you are running `checker` as for the video to be extracted.
+* `Begin Time - msec` – the number of milliseconds into the larger clip that the fingerspelling started.
+* `End Time - msec` – the number of milliseconds into the larger clip that the fingerspelling ended.
+* `Label` – the label associated with the video if there is one (if there is none, this must still exist, but can be left as "").
 
 # Export data
 To export the data you can generate a csv with all of the relevant video data, as well as the annotations from the annotators using `checker export file.csv`. This makes a csv where each row is an annotation from a specific user for a specific video. Videos may have more than one annotation if multiple annotators annotated for the same video (or possibly even have multiple annotations from the same annotator if they have annotated it multiple times).
