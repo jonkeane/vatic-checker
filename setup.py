@@ -33,7 +33,7 @@ setup(
                        "public/*.html"]},
     include_package_data=True,
     namespace_packages = ["vatic_checker"],
-    install_requires = ["setuptools", "SQLAlchemy", "wsgilog", "Pillow", "MySQL-python"],
+    install_requires = ["setuptools", "SQLAlchemy", "wsgilog", "Pillow", "mysqlclient"],
     tests_require = test_deps,
     extras_require = extras
 )
