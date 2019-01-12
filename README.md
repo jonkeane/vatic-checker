@@ -14,11 +14,11 @@ Once you have installed `vatic-checker` you will have access to the `checker` co
 
 # Configuration
 ## Initialize a directory to serve `vatic-checker` from
-You can use `checker init directory` to install a directory to server from. Edit `directory/config.py appropriately` as appropriate. For these examples, let's say that we went to the `/var/www` directory and we initialized with `checker init vatic-checker`. This means the directory where we are serving from is `/var/www/vatic-checker`. Then edit and move `http.conf` to the correct directory for your system.
+You can use `checker init directory` to install a directory to serve from. Edit `directory/config.py appropriately` as appropriate. For these examples, let's say that we went to the `/var/www` directory and we initialized with `checker init vatic-checker`. This means the directory where we are serving from is `/var/www/vatic-checker`. Then edit and move `http.conf` to the correct directory for your system (e.g. `/etc/httpd/conf.d/`).
 
 ## Initialize the database
 First, we need to create the database itself, which you can do with:
-`mysql -u [your user with appropriate permissions] -e 'create database vaticChecker;'` Use the name `vaticChecker` (or whatever you change that to) at the end of `database = mysql://[your user with appropriate permissions]@localhost/vaticChecker` in the config.py file to specify the user and database to use.
+`mysql -u [your user with appropriate permissions] -e 'create database vaticChecker;'` Then, use the name `vaticChecker` (or whatever you change that to) at the end of `database = mysql://[your user with appropriate permissions]@localhost/vaticChecker` in the config.py file to specify the user and database to use.
 
 Now, run `checker setup --database` from the directory you are serving `vatic-checker` from (here: `/var/www/vatic-checker`), which will install all the necessary tables.
 
