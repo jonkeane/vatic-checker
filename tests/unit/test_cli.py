@@ -43,7 +43,7 @@ session = UnifiedAlchemyMagicMock(data = [
                 fortraining=False,
                 symlinkpath="tests/to_delete/"
             ))
-def test_load(mocker):
+def test_load(self):
     session.reset_mock()
 
     test_dir = "./tests/to_delete"
@@ -80,7 +80,7 @@ def test_load(mocker):
                 fortraining=True,
                 symlinkpath="tests/to_delete/"
             ))
-def test_load_training(mocker):
+def test_load_training(self):
     session.reset_mock()
 
     test_dir = "./tests/to_delete"
@@ -110,7 +110,7 @@ def test_load_training(mocker):
                 username="a_brand_newuser",
                 trained=False
             ))
-def test_newuser(mocker):
+def test_newuser(self):
     session.reset_mock()
 
     cli.newuser("f")
@@ -126,7 +126,7 @@ def test_newuser(mocker):
                 username="a_newuser",
                 trained=False
             ))
-def test_newuser_already_exists(mocker):
+def test_newuser_already_exists(self):
     session.reset_mock()
 
     cli.newuser("f")
