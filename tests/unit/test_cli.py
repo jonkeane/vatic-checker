@@ -7,12 +7,12 @@ sys.path.insert(0, myPath + "/../../src/vatic_checker/") # move to the src direc
 import cli
 import model
 
-from alchemy_mock.mocking import UnifiedAlchemyMagicMock, AlchemyMagicMock, mock
+from alchemy_mock.mocking import UnifiedAlchemyMagicMock, AlchemyMagicMock
 import argparse
 try:
-    from unittest.mock import patch  # python 3.3+
+    from unittest.mock import patch, call  # python 3.3+
 except ImportError:
-    from mock import patch  # python 2.6-3.2
+    from mock import patch, call # python 2.6-3.2
 
 # current working directory
 cwd = os.getcwd()
@@ -21,8 +21,8 @@ cwd = os.getcwd()
 # mock the session object from cli so that the database isn't harmed.
 session = UnifiedAlchemyMagicMock(data = [
     (
-        [mock.call.query(model.User),
-         mock.call.filter(model.User.username == "a_newuser")],
+        [call.query(model.User),
+         call.filter(model.User.username == "a_newuser")],
         [model.User(guid=uuid.UUID("87599456d52b48b78a6b1b5b0ded7be1"),
                     username="a_newuser",
                     completed_training=False)]
