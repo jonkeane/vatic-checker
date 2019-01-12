@@ -14,6 +14,9 @@ try:
 except ImportError:
     import mock  # python 2.6-3.2
 
+# current working directory
+cwd = os.getcwd()
+
 
 # mock the session object from cli so that the database isn't harmed.
 session = UnifiedAlchemyMagicMock(data = [
@@ -55,7 +58,7 @@ def test_load(mock_args):
     # assert that Video was inserted into (and not TrainingVideo)
     video_added = session.mock_calls[0][1][0]
     assert isinstance(video_added, model.Video)
-    assert video_added.path == "/var/www/vatic-checker/tests/frames/zero"
+    assert video_added.path == os.path.join(cwd, "tests/frames/zero")
     assert video_added.name == "aslized_ben_jarashow_1745"
     
     # assert that the link was created.
@@ -92,7 +95,7 @@ def test_load_training(mock_args):
     # assert that TrainingVideo was inserted into and gold_standard_label was filled
     video_added = session.mock_calls[0][1][0]
     assert isinstance(video_added, model.TrainingVideo)
-    assert video_added.path == "/var/www/vatic-checker/tests/frames/zero"
+    assert video_added.path == os.path.join(cwd, "tests/frames/zero")
     assert video_added.name == "aslized_ben_jarashow_1745"
     assert video_added.gold_standard_label == "yll"
 
