@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/jonkeane/vatic-checker.svg?branch=master)](https://travis-ci.org/jonkeane/vatic-checker)
+
 # Vatic checker
 A simple web application that displays videos and allows users to annotate them. It borrows heavily from [vatic](https://github.com/cvondrick/vatic) (especially the video interface), but does not connect to or use Amazon's Mechanical Turk at all.
 
