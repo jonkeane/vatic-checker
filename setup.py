@@ -28,5 +28,5 @@ setup(
     include_package_data=True,
     namespace_packages=["vatic_checker"],
     install_requires = ["setuptools", "SQLAlchemy", "wsgilog", "Pillow", "MySQL-python"],
-    tests_require = ["pytest", "mock", "aclhemy-mock"]
+    tests_require = ["pytest", "mock", "alchemy-mock"]
 )
