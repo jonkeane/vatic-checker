@@ -7,12 +7,12 @@ sys.path.insert(0, myPath + "/../../src/vatic_checker/") # move to the src direc
 import cli
 import model
 
-from alchemy_mock.mocking import UnifiedAlchemyMagicMock, AlchemyMagicMock
+from alchemy_mock.mocking import UnifiedAlchemyMagicMock, AlchemyMagicMock, mock
 import argparse
 try:
-    from unittest import mock  # python 3.3+
+    from unittest.mock import patch  # python 3.3+
 except ImportError:
-    import mock  # python 2.6-3.2
+    from mock import patch  # python 2.6-3.2
 
 # current working directory
 cwd = os.getcwd()
@@ -28,8 +28,8 @@ session = UnifiedAlchemyMagicMock(data = [
                     completed_training=False)]
     )
 ])
-@mock.patch('cli.session', new=session)
-@mock.patch('argparse.ArgumentParser.parse_args',
+@patch('cli.session', new=session)
+@patch('argparse.ArgumentParser.parse_args',
             return_value=argparse.Namespace(
                 name="aslized/ben_jarashow_1745",
                 location="tests/frames/zero",
@@ -43,7 +43,7 @@ session = UnifiedAlchemyMagicMock(data = [
                 fortraining=False,
                 symlinkpath="tests/to_delete/"
             ))
-def test_load(self):
+def test_load(mock_args):
     session.reset_mock()
 
     test_dir = "./tests/to_delete"
@@ -65,8 +65,8 @@ def test_load(self):
     assert os.path.islink(os.path.join(test_dir, "aslized_ben_jarashow_1745"))
     shutil.rmtree("./tests/to_delete")
 
-@mock.patch('cli.session', new=session)
-@mock.patch('argparse.ArgumentParser.parse_args',
+@patch('cli.session', new=session)
+@patch('argparse.ArgumentParser.parse_args',
             return_value=argparse.Namespace(
                 name="aslized/ben_jarashow_1745",
                 location="tests/frames/zero",
@@ -80,7 +80,7 @@ def test_load(self):
                 fortraining=True,
                 symlinkpath="tests/to_delete/"
             ))
-def test_load_training(self):
+def test_load_training(mock_args):
     session.reset_mock()
 
     test_dir = "./tests/to_delete"
@@ -104,13 +104,13 @@ def test_load_training(self):
     shutil.rmtree("./tests/to_delete")
 
 
-@mock.patch('cli.session', new=session)
-@mock.patch('argparse.ArgumentParser.parse_args',
+@patch('cli.session', new=session)
+@patch('argparse.ArgumentParser.parse_args',
             return_value=argparse.Namespace(
                 username="a_brand_newuser",
                 trained=False
             ))
-def test_newuser(self):
+def test_newuser(mock_args):
     session.reset_mock()
 
     cli.newuser("f")
@@ -120,13 +120,13 @@ def test_newuser(self):
     session.commit.assert_called_once()
 
 
-@mock.patch('cli.session', new=session)
-@mock.patch('argparse.ArgumentParser.parse_args',
+@patch('cli.session', new=session)
+@patch('argparse.ArgumentParser.parse_args',
             return_value=argparse.Namespace(
                 username="a_newuser",
                 trained=False
             ))
-def test_newuser_already_exists(self):
+def test_newuser_already_exists(mock_args):
     session.reset_mock()
 
     cli.newuser("f")
