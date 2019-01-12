@@ -237,7 +237,8 @@ class load(object):
             .format(args.location)))
 
         print("Found {0} frames.".format(maxframes))
-	args.length = maxframes + 1 # what is going on here?
+        
+        args.length = maxframes + 1 
 
         # can we read the last frame?
         path = self.table.getframepath(maxframes, args.location)
