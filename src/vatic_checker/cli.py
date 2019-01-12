@@ -62,7 +62,7 @@ def main(args = None):
         try:
            handler = handlers[args[0]][0]
         except KeyError:
-            print "Error: Unknown action {0}".format(args[0])
+            print("Error: Unknown action {0}".format(args[0]))
         else:
             try:
                 handler(args[1:])
@@ -75,7 +75,7 @@ def help(args = None):
     Print the help information.
     """
     for action, (_, help) in sorted(handlers.items()):
-        print "{0:>15}   {1:<50}".format(action, help)
+        print("{0:>15}   {1:<50}".format(action, help))
 
 @handler("Start a new instance of vatic_checker")
 class init(Command):
@@ -90,7 +90,7 @@ class init(Command):
         target = os.path.join(os.getcwd(), args.name)
 
         if os.path.exists(target):
-            print "{0} already exists".format(target)
+            print("{0} already exists".format(target))
             return
 
         shutil.copytree(public, os.path.join(target, "public"))
@@ -103,101 +103,13 @@ class init(Command):
         for file in glob.glob(target + "/*.pyc"):
             os.remove(file)
 
-        print "Initialized new project: {0}".format(args.name);
+        print("Initialized new project: {0}".format(args.name))
 
 # TODO: update status
 @handler("See vatic_chcker status")
 class status(Command):
-    def setup(self):
-        parser = argparse.ArgumentParser()
-        parser.add_argument("--turk", action = "store_true")
-        parser.add_argument("--verify", action = "store_true")
-        return parser
-
-    def serverconfig(self, session):
-        print "Configuration:"
-        print "  Sandbox:     {0}".format("True" if config.sandbox else "False")
-        print "  Database:    {0}".format(config.database)
-        print "  Localhost:   {0}".format(config.localhost)
-        print ""
-
-    def serverstatus(self, session):
-        query = session.query(HIT)
-        query = query.join(Assignment)
-        available = query.filter(HIT.ready == True).count()
-        published = query.filter(HIT.published == True).count()
-        completed = query.filter(Assignment.completed == True).count()
-        compensated = query.filter(Assignment.compensated == True).count()
-        remaining = published - completed
-
-        print "Status: (assignments)"
-        print "  Available:   {0}".format(available)
-        print "  Published:   {0}".format(published)
-        print "  Completed:   {0}".format(completed)
-        print "  Compensated: {0}".format(compensated)
-        print "  Remaining:   {0}".format(remaining)
-        print ""
-
-        if remaining > 0:
-            print "Server is ONLINE and accepting work!"
-        else:
-            if compensated == completed:
-                print "Server is offline."
-            else:
-                print "Server is offline, but some workers are not compensated."
-
-    def verify(self, session):
-        passed = True
-
-        print "Testing access to Amazon Mechanical Turk...",
-        try:
-            balance = None # api.server.balance
-        except Exception as e:
-            print "ERROR!", e
-            passed = False
-        else:
-            print "OK"
-
-        print "Testing access to database server...",
-        try:
-            count = session.query(HIT).count()
-        except Exception as e:
-            print "ERROR!", e
-            passed = False
-        print "OK"
-
-        print "Testing access to web server...",
-        try:
-            da = urllib2.urlopen(
-                    "{0}/turkic/verify.html".format(config.localhost))
-            da = da.read().strip()
-            if da == "1":
-                print "OK"
-            else:
-                print "ERROR!",
-                print "GOT RESPONSE, BUT INVALID"
-                print da
-                passed = False
-        except Exception as e:
-            print "ERROR!", e
-            passed = False
-
-        print ""
-        if passed:
-            print "All tests passed!"
-        else:
-            print "One or more tests FAILED!"
-
     def __call__(self, args):
-        session = database.connect()
-        try:
-            self.serverconfig(session)
-            if args.verify:
-                self.verify(session)
-            else:
-                self.serverstatus(session)
-        finally:
-            session.close()
+        print("Not implemented")
 
 @handler("Setup the application")
 class setup(Command):
@@ -209,7 +121,7 @@ class setup(Command):
 
     def resetdatabase(self):
         database.reinstall()
-        print "Database reset!"
+        print("Database reset!")
 
     def database(self, args):
         import model
@@ -222,10 +134,10 @@ class setup(Command):
                 if resp in ["yes", "y"]:
                     self.resetdatabase()
                 else:
-                    print "Aborted. No changes to database."
+                    print("Aborted. No changes to database.")
         else:
             database.install()
-            print "Installed new tables, if any."
+            print("Installed new tables, if any.")
 
     def __call__(self, args):
         if args.database:
@@ -256,7 +168,7 @@ class extract(Command):
         try:
             for frame, image in enumerate(sequence):
                 if frame % 100 == 0:
-                    print ("Decoding frames {0} to {1}"
+                    print("Decoding frames {0} to {1}"
                         .format(frame, frame + 100))
                 if not args.no_resize:
                     image.thumbnail((args.width, args.height), Image.BILINEAR)
@@ -268,7 +180,7 @@ class extract(Command):
                     image.save(path)
         except:
             if not args.no_cleanup:
-                print "Aborted. Cleaning up..."
+                print("Aborted. Cleaning up...")
                 shutil.rmtree(args.output)
             raise
 
@@ -305,7 +217,7 @@ class load(object):
         return parser
 
     def __call__(self, args):
-        print "Checking integrity..."
+        print("Checking integrity...")
 
         # read first frame to get sizes
         path = self.table.getframepath(0, args.location)
@@ -313,18 +225,18 @@ class load(object):
         try:
             im = Image.open(path)
         except IOError:
-            print "Cannot read {0}".format(path)
+            print("Cannot read {0}".format(path))
             raise
             return
         width, height = im.size
 
-        print "Searching for last frame..."
+        print("Searching for last frame...")
 
         maxframes = max(int(os.path.splitext(x)[0])
             for x in os.listdir("{0}"
             .format(args.location)))
 
-        print "Found {0} frames.".format(maxframes)
+        print("Found {0} frames.".format(maxframes))
 	args.length = maxframes + 1 # what is going on here?
 
         # can we read the last frame?
@@ -332,17 +244,17 @@ class load(object):
         try:
             im = Image.open(path)
         except IOError:
-            print "Cannot read {0}".format(path)
+            print("Cannot read {0}".format(path))
             return
 
         # check last frame sizes
         if im.size[0] != width and im.size[1] != height:
-            print "First frame dimensions differs from last frame"
+            print("First frame dimensions differs from last frame")
             return
 
         # TODO: if name is the same offer to make a *1 version
         # if session.query(table).filter(self.table.slug == args.slug).count():
-        #     print "Video {0} already exists!".format(args.slug)
+        #     print("Video {0} already exists!".format(args.slug))
         #     return
 
         # create video
@@ -366,7 +278,7 @@ class load(object):
         video = self.table(**video_args)
         session.add(video)
 
-        print "Creating symbolic link..."
+        print("Creating symbolic link...")
         symlink = os.path.join(args.symlinkpath, "{0}".format(video.name))
         try:
             os.remove(symlink)
@@ -382,7 +294,7 @@ class load(object):
 
         session.commit()
 
-        print "Video loaded and ready for annotation."
+        print("Video loaded and ready for annotation.")
 
 @handler("Imports a training video")
 class loadtraining(load):
@@ -440,9 +352,9 @@ class users(object):
         print("The following users are configured in the server:")
         cols = ["guid", "name", "trained?"]
         row_format = "{:>37}{:>" + str(max(username_lengths) + 2 ) + "}{:>10}"
-        print row_format.format(*cols)
+        print(row_format.format(*cols))
         for row in user_data:
-            print row_format.format(*row)
+            print(row_format.format(*row))
         return
 
 @handler("Adds a new user")
@@ -459,12 +371,12 @@ class newuser(object):
         return parser
 
     def __call__(self, args):
-        print "Checking if the user already exists..."
+        print("Checking if the user already exists...")
 
         users = session.query(model.User).filter(model.User.username == args.username)
 
         if users.count() > 0:
-            print "There's already a user named {0}".format(args.username)
+            print("There's already a user named {0}".format(args.username))
             return
 
         # create user
@@ -479,7 +391,7 @@ class newuser(object):
 
         session.commit()
 
-        print "A new user has been created for {0}".format(user.username)
+        print("A new user has been created for {0}".format(user.username))
 
 @handler("Removes a user")
 class deleteuser(object):
@@ -497,17 +409,17 @@ class deleteuser(object):
         users = session.query(model.User).filter(model.User.username == args.username)
 
         if users.count() < 1:
-            print "There is no user named {0}".format(args.username)
+            print("There is no user named {0}".format(args.username))
             return
         elif users.count() > 1:
-            print "Cannot yet delete users that have the same username"
+            print("Cannot yet delete users that have the same username")
             return
 
         # delete the user
         users.delete()
         session.commit()
 
-        print "The user {0} has been deleted".format(args.username)
+        print("The user {0} has been deleted".format(args.username))
 
 @handler("Exports data")
 class export(object):
@@ -564,7 +476,7 @@ class export(object):
             for row in annos:
                 csv_out.writerow(row)
 
-        print "Exported {0} annotations".format(annotations.count())
+        print("Exported {0} annotations".format(annotations.count()))
 
 @handler("Takes a csv of data clips the videos and then imports it")
 class importcsv(object):
@@ -658,4 +570,4 @@ class importcsv(object):
                 load_args.append("--fortraining")
             load(load_args)
 
-        print ("Completed loading from {0}".format(args.filename))
+        print("Completed loading from {0}".format(args.filename))
