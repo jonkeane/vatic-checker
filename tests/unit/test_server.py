@@ -103,16 +103,6 @@ class TestHandler(TestCase):
     #     status = server.check_training_completion(trained_user, 2)
     #     self.assertTrue(status)
 
-    @patch('server.session', new=session)
-    def test_next_video(self):
-        session.reset_mock()
-        status = server.getNextLeastAnnoedVideo(trained_user)
-        self.assertTrue(status)
-        import pdb; pdb.set_trace()
-        # and there's a commit that is updating the user
-        session.commit.assert_called_once()
-
-
 
     def test_parse_anno_sql_cleansing(self):
         new_guid = uuid.uuid4()
