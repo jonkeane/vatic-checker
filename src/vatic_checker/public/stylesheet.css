@@ -505,7 +505,6 @@ span.ui-checkboxradio-icon { display: none; }
 {
     height:50px;
     width: 302px;
-    font-size:32pt;
     float: left;
     margin-top: 5px;
 }
@@ -536,9 +535,29 @@ span.ui-checkboxradio-icon { display: none; }
 #loginscreentext
 {
     margin:0px auto;
+    width: 305px;
 }
 
-#loginscreentext
+#finishedscreentext
 {
-    width: 305px;
+    margin:0px auto;
+    width: 455px;
+}
+
+#finishedscreentext img
+{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+#logoutbuttonfinished
+{
+    height:30px;
+    width: 355px;
+    font-size:20pt !important;
+    float: left;
+    margin-top: 5px;
 }

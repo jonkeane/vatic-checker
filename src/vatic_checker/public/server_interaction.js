@@ -1,13 +1,17 @@
-function annoer_has_trained(iftrue, iffalse)
+function annoer_next_video(iftrained, ifnottrained, if_no_more_videos)
 {
     server_next_video(function(data) {
-        if (data["trained"])
+        if (data["trained"] & data["no_videos_left"])
         {
-            iftrue(data);
+            if_no_more_videos(data);
+        }
+        else if (data["trained"])
+        {
+            iftrained(data);
         }
         else
         {
-            iffalse(data);
+            ifnottrained(data);
         }
     });
 }

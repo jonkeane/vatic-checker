@@ -8,7 +8,7 @@ from urllib.parse import urlparse, urlencode
 from urllib.request import urlopen, Request
 from urllib.error import HTTPError
 
-import json, re, datetime, uuid, cStringIO, logging, urllib
+import json, re, datetime, uuid, cStringIO, logging, urllib, urllib2
 from sqlalchemy import and_, func, distinct, desc
 from sqlalchemy.orm import aliased
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
@@ -19,6 +19,8 @@ from vatic_checker.database import session
 import vatic_checker.model as model
 
 import config
+
+import server # needed for alchemy-mock tests
 
 # setup handler
 ch = logging.StreamHandler(sys.stdout)
@@ -66,12 +68,39 @@ def get_next(userid):
             session.commit()
             status["trained"] = training_check
 
-    if status["trained"]:
-        status.update(getNextLeastAnnoedVideo(user))
+
+    if hasVideosLeft(user):
+        if status["trained"]:
+            status.update(getNextLeastAnnoedVideo(user))
+        else:
+            status.update(getNextTrainingVideo(user))
     else:
-        status.update(getNextTrainingVideo(user))
+        status["no_videos_left"] = True
 
     return status
+
+def hasVideosLeft(user):
+    """
+    Returns True if the user has videos left to annotate. This allows us to
+    restrict the annotations to one per video
+    """
+    # check the setting in config, default to true. If we allow duplicate
+    # annotations (that is duplicate_annotations is True), return True
+    # quickly without checking if the user has already annotated some.
+    if config.duplicate_annotations:
+        return True
+
+    current_annotations = session.query(model.Annotation).filter(model.Annotation.user_guid == user.guid)
+    subq = session.query(model.Annotation).\
+            filter(model.Annotation.user_guid == user.guid).\
+            subquery('sub')
+    videos_annoed = session.query(model.Video, subq.c.text).\
+         outerjoin(subq, subq.c.video_id == model.Video.id)
+
+    if videos_annoed.filter(subq.c.text == None).count() > 0:
+        return True
+    else:
+        return False
 
 
 def getNextLeastAnnoedVideo(user):
@@ -193,7 +222,6 @@ def check_training_completion(user, n):
     filter(model.Training.user_guid == user_guid).\
     group_by(model.Training.video_id).\
     filter(model.Training.success == True)
-
     if trainings.count() >= n:
         print("setting training to true")
         user.trained = True

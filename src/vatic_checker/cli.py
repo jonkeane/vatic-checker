@@ -244,8 +244,8 @@ class load(object):
             .format(args.location)))
 
         print("Found {0} frames.".format(maxframes))
-        
-        args.length = maxframes + 1 
+
+        args.length = maxframes + 1
 
         # can we read the last frame?
         path = self.table.getframepath(maxframes, args.location)
@@ -579,3 +579,38 @@ class importcsv(object):
             load(load_args)
 
         print("Completed loading from {0}".format(args.filename))
+
+
+@handler("Adds a new user")
+class userannos(object):
+    def __init__(self, args):
+        args = self.setup().parse_args(args)
+
+        self(args)
+
+    def setup(self):
+        parser = argparse.ArgumentParser(add_help=False)
+        parser.add_argument("username")
+        return parser
+
+    def __call__(self, args):
+        print("Checking if the {0} exists...".format(args.username))
+
+        users = session.query(model.User).filter(model.User.username == args.username)
+
+        if users.count() == 0:
+            print("There's no user named {0}".format(args.username))
+            return
+
+        user = users.first()
+
+        # grab the user's annotations
+        current_annotations = session.query(model.Annotation).filter(model.Annotation.user_guid == user.guid)
+        subq = session.query(model.Annotation).\
+                filter(model.Annotation.user_guid == user.guid).\
+                subquery('sub')
+        videos_annoed = session.query(model.Video, subq.c.text).\
+             outerjoin(subq, subq.c.video_id == model.Video.id)
+
+        print("{0} has already annotated {1} videos.".format(user.username, videos_annoed.filter(subq.c.text != None).count()))
+        print("{0} has {1} videos left to annotate.".format(user.username, videos_annoed.filter(subq.c.text == None).count()))

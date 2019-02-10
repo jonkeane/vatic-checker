@@ -2,5 +2,6 @@
 
 while true; do
     sleep 2
-    rsync -a --delete --exclude public/frames /var/www/vatic-checker/ /var/www/vatic-checker-live
+    rsync -a --delete --exclude frames /var/www/vatic-checker/src/vatic_checker/public/ /var/www/vatic-checker-live/public
+    cp /var/www/vatic-checker/src/server.py /var/www/vatic-checker-live/server.py
 done

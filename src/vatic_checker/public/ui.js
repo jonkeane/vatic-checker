@@ -87,7 +87,7 @@ function ui_setup(video)
     $("#play_controls").append("<button class='button' style='width:85px' id='playbutton'>Play</button></div>");
 
     $("#annobar").append("<form onsubmit='return false;' id='annotation_form'></form>");
-    $("#annotation_form").append("<input id='annotation_label' type='text' placeholder='Type your annotation here'></input>");
+    $("#annotation_form").append("<input id='annotation_label' type='text' autocomplete='off' placeholder='Type your annotation here'></input>");
 
     $("<div id='objectcontainer'></div>").appendTo("#sidebar");
     $("#objectcontainer").append("<p><b>Instructions</b></p>");

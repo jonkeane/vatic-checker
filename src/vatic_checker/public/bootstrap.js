@@ -32,12 +32,15 @@ function boot()
         }
     }
 
-    annoer_has_trained(function(data) {
+    annoer_next_video(function(data) {
         console.log("The annotator has completed training");
         dispatch(false, data);
     }, function(data) {
         console.log("The annotator needs to complete the training");
         dispatch(true, data);
+    },function(data) {
+        console.log("The annotator has no more videos to annotate");
+        no_more_videos();
     });
 }
 
@@ -66,6 +69,24 @@ function loadingscreen(video)
     );
 }
 
+function no_more_videos()
+{
+    var ls = $("<div id='finishedscreen'></div>");
+    ls.append("<div id='finishedscreentext'></div>");
+    container.html(ls);
+
+    $("#finishedscreentext").append("<h1>You've annotated all the videos!</h1>");
+    $("#finishedscreentext").append("<img src='party-popper.png'/>");
+    $("#finishedscreentext").append("<p>Each user is only able to annotate each video once. There are no more videos on the server for you to annotate. If you think this is in error, please contact the researcher.</p>");
+    $("#finishedscreentext").append("<div id='logoutbuttonfinished' class='button'>Logout</div>");
+    $("#logoutbuttonfinished").click(function() {
+        clear_session_params(reload = true);
+    }).button();
+
+    eventlog("preload", "There are no more videos to annotate");
+}
+
+
 function loginscreen()
 {
     var ls = $("<div id='loginscreen'></div>");
@@ -77,7 +98,7 @@ function loginscreen()
 
     $("#loginscreentext").append("<form onsubmit='return false;' id='login'></form>");
     $("#login").append("<div id='usernamelabel'><h3 style='margin-bottom:0px; display:inline-block;'>Username</h3></div>");
-    $("#login").append("<div><input id='username' type='text'></input></div>");
+    $("#login").append("<div><input id='username' type='text' autocomplete='off'></input></div>");
     $("#login").append("<div class='g-recaptcha' data-sitekey='6LePuIUUAAAAAIl_cGo2946oqqrLycEbmWAP3AJ-' data-callback='remove_captchafail'></div>")
     $("#login").append("<div><button id='loginsubmitbutton' class='button'>Submit</button></div>");
     $("#loginsubmitbutton").button({
