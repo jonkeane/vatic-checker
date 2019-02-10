@@ -43,6 +43,8 @@ class GUID(TypeDecorator):
         else:
             return uuid.UUID(value)
 
+database.Base.metadata.clear()
+
 class Video(database.Base):
     __tablename__   = "videos"
 
