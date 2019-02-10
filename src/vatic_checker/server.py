@@ -8,7 +8,7 @@ from urllib.parse import urlparse, urlencode
 from urllib.request import urlopen, Request
 from urllib.error import HTTPError
 
-import json, re, datetime, uuid, logging, urllib, urllib2
+import json, re, datetime, uuid, logging, urllib
 from sqlalchemy import and_, func, distinct, desc
 from sqlalchemy.orm import aliased
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
@@ -313,8 +313,8 @@ def login(params, postdata):
         "secret": config.recaptcha_secret,
         "response": postdata.get('recaptcha', '')
         }
-    request = urllib2.Request(recaptcha_url, data=urllib.urlencode(data))
-    resp = urllib2.urlopen(request)
+    request = Request(recaptcha_url, data=urllib.urlencode(data))
+    resp = urlopen(request)
     resp = json.loads(resp.read())
 
     # if the captch wasn't verified return false.
