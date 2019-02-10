@@ -260,10 +260,26 @@ class load(object):
             print("First frame dimensions differs from last frame")
             return
 
-        # TODO: if name is the same offer to make a *1 version
-        # if session.query(table).filter(self.table.slug == args.slug).count():
-        #     print("Video {0} already exists!".format(args.slug))
-        #     return
+        # if name and start and end are the same, this probably is a duplicate
+        videos = session.query(model.Video).\
+            filter(model.Video.name == args.name,
+                   model.Video.start == args.start,
+                   model.Video.end == args.end)
+        if videos.count():
+            print("Video {0} at {1} already exists with the same start time, end time, and name.".format(args.name, os.path.realpath(args.location)))
+            raise ValueError("Video {0} is already in the database with the same start time, end time, and name.".format(args.name))
+
+        # if there is already a video with this name, add _N to the end
+        videos = session.query(model.Video).\
+            filter(model.Video.name == args.name)
+        if videos.count():
+            old_name = args.name
+            # get the number of videos with the name already in the DB, and add that + 1 to ensure uniqueness
+            sim_videos = session.query(model.Video).\
+                filter(model.Video.name.like(args.name+"%"))
+            args.name = old_name + "_" + str(sim_videos.count()+1)
+
+            print("There's already a video named {0}, renaming this one to {1}".format(old_name, args.name))
 
         # create video
         video_args = {

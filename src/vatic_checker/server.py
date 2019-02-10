@@ -8,7 +8,7 @@ from urllib.parse import urlparse, urlencode
 from urllib.request import urlopen, Request
 from urllib.error import HTTPError
 
-import json, re, datetime, uuid, cStringIO, logging, urllib, urllib2
+import json, re, datetime, uuid, logging, urllib, urllib2
 from sqlalchemy import and_, func, distinct, desc
 from sqlalchemy.orm import aliased
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound

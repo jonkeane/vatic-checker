@@ -1,6 +1,6 @@
 import server
 
-import json, re, datetime, uuid, cStringIO, logging
+import json, re, datetime, uuid, logging
 from sqlalchemy import and_, func, distinct, desc
 from sqlalchemy.orm import aliased
 from sqlalchemy.orm.exc import NoResultFound

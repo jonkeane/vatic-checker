@@ -48,7 +48,7 @@ class Video(database.Base):
 
     id              = Column(Integer, primary_key = True)
     path            = Column(String(350))
-    name            = Column(String(250), index = True) # maybe don't need the index?
+    name            = Column(String(250), index = True, unique = True)
     duration        = Column(Integer)
     start           = Column(Integer)
     end             = Column(Integer)
