@@ -141,7 +141,7 @@ def getNextLeastAnnoedVideo(user):
 
     try:
         video = videos.first()
-    except NoResultFound, e:
+    except NoResultFound:
         logger.error("Found no videos available for annotations for user: %s" % (user_guid))
         return None
 
@@ -177,7 +177,7 @@ def getNextTrainingVideo(user):
 
     try:
         training_videos = training_videos.first()
-    except NoResultFound, e:
+    except NoResultFound:
         # TODO: don't try to get the next training video if none are left?
         logger.error("Found no training videos available for annotations for user: %s" % (user_guid))
         return None
