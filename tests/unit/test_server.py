@@ -4,8 +4,8 @@ import sys, os, shutil, uuid
 myPath = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, myPath + "/../../src/vatic_checker/") # move to the src directory
 
-import server
 import vatic_checker.model as model
+import server
 from vatic_checker.handler import Error500
 
 from sqlalchemy import and_, func, distinct, desc
