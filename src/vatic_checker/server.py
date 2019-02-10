@@ -19,10 +19,10 @@ from vatic_checker.database import session
 import vatic_checker.model as model
 
 import config
-
-if "pytest" in sys.modules:
-    # needed for alchemy-mock tests but not normally
-    import server
+# 
+# if "pytest" in sys.modules:
+#     # needed for alchemy-mock tests but not normally
+#     import server
 
 # setup handler
 ch = logging.StreamHandler(sys.stdout)
