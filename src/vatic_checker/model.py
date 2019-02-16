@@ -104,6 +104,7 @@ class User(database.Base):
     guid                 = Column(GUID, primary_key = True)
     username             = Column(String(250), unique = True)
     completed_training   = Column(Boolean, default = False)
+    can_see_status       = Column(Boolean, default = False)
 
 class Training(database.Base):
     __tablename__ = "trainings"

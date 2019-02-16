@@ -82,10 +82,20 @@ function no_more_videos()
     $("#logoutbuttonfinished").click(function() {
         clear_session_params(reload = true);
     }).button();
+    add_status_button("#finishedscreentext");
 
     eventlog("preload", "There are no more videos to annotate");
 }
 
+function add_status_button(where)
+{
+    if (get_session_params()["can_see_status"]) {
+        $(where).append("<div id='status_button' class='button'>Status</div>");
+        $("#status_button").click(function() {
+            ui_showstatus();
+        }).button();
+    }
+}
 
 function loginscreen()
 {
@@ -101,11 +111,7 @@ function loginscreen()
     $("#login").append("<div><input id='username' type='text' autocomplete='off'></input></div>");
     $("#login").append("<div class='g-recaptcha' data-sitekey='6LePuIUUAAAAAIl_cGo2946oqqrLycEbmWAP3AJ-' data-callback='remove_captchafail'></div>")
     $("#login").append("<div><button id='loginsubmitbutton' class='button'>Submit</button></div>");
-    $("#loginsubmitbutton").button({
-        icons: {
-            primary: 'ui-icon-check'
-        }
-    }).click(function() {
+    $("#loginsubmitbutton").button().click(function() {
         if (ui_disabled) return;
         if ($("#loginsubmitbutton")[0].classList.contains("ui-button-disabled")) return;
         if (grecaptcha.getResponse() == "") {
@@ -130,6 +136,10 @@ function trylogin(callback)
     data = JSON.stringify(data);
     server_post("login", ["not_needed"], data, function(data) {
         if (data["success"]) {
+            // insert can_see_status, default false
+            status = data["can_see_status"] ? data["can_see_status"] : false
+            insert_param("can_see_status", status)
+            // callback is also insert_param, but will also reload
             callback("user_guid", data["user_guid"], reload = true)
         } else {
             if (data["reason"] == "Incorrect username") {
@@ -145,6 +155,10 @@ function get_session_params()
 {
     var out = {};
     out.user_guid = window.sessionStorage.getItem("user_guid")
+
+    // default can_see_status to false, need to check the string for True/true
+    can_see_status = window.sessionStorage.getItem("can_see_status")
+    out.can_see_status = can_see_status ? can_see_status.toLowerCase() == "true" : false
 
     // get speed, but if it doesn't exist, then just use "speedcontrolnorm"
     possible_speeds = ["speedcontrolslower", "speedcontrolslow", "speedcontrolnorm", "speedcontrolfast"]
@@ -173,6 +187,7 @@ function insert_param(key, value, reload = false)
 function clear_session_params(reload = false)
 {
     window.sessionStorage.removeItem("user_guid");
+    window.sessionStorage.removeItem("can_see_status");
     window.sessionStorage.removeItem("speed");
     if (reload) {
         location.reload();

@@ -43,7 +43,8 @@ function ui_setup(video)
     $("<table>" +
         "<tr>" +
             "<td><div id='instructions'>Type the word that was fingerspelled into the box below the video.</td>" +
-            "<td><div id='logoutbutton' class='button'>Logout</div><div id='topbar'></div></td>" +
+            // These are reversed from where we want them because css
+            "<td><div id='logoutbutton' class='button'>Logout</div><div id='status_container'></div></td>" +
         "</tr>" +
         "<tr>" +
               "<td><div id='videoframe'></div></td>" +
@@ -130,6 +131,8 @@ function ui_setup(video)
 
 function ui_setupbuttons(video, player)
 {
+
+    add_status_button("#status_container");
 
     $("#logoutbutton").click(function() {
         clear_session_params(reload = true);
@@ -582,4 +585,71 @@ function ui_enable(flag)
     ui_disabled = Math.max(0, ui_disabled);
 
     console.log("UI disabled with count = " + ui_disabled);
+}
+
+
+
+function ui_showstatus(job)
+{
+    console.log("Popup status");
+
+    if ($("#statusdialog").size() > 0)
+    {
+        return;
+    }
+
+    eventlog("status", "Popup status");
+
+    $('<div id="overlay"></div>').appendTo("#container");
+    var h = $('<div id="statusdialog"></div>').appendTo("#container");
+    var inst_controls = $('<div id="statuscontrols"></div>').appendTo(h);
+
+    $('<div class="button" id="statusclosetop" style="float: right;">Dismiss Status</div>').appendTo(inst_controls).button({
+        icons: {
+            primary: "ui-icon-circle-close"
+        }
+    }).click(ui_closestatus);
+
+    server_request("status",
+        [get_session_params().user_guid],
+        function(data) {
+            status_screen(data, h);
+        });
+
+    ui_disable();
+
+    document.body.addEventListener("click", function(e) {
+      var target = e.target || e.srcElement;
+      var status_area = document.getElementById("statusdialog");
+      var status_button = document.getElementById("status_button");
+
+      // if the clicked object is in the status area or the status
+      // button itself ignore the click. Additionally if the status are not up
+      // ignore the click. If the status are up, and the click is outside of the
+      // status, then close the status.
+      if ( ( status_area != null && target !== status_area && !isChildOf(target, status_area) ) &&
+           ( status_button != null && target !== status_button && !isChildOf(target, status_button) ) ) {
+             ui_closestatus();
+      }
+    }, false);
+}
+
+function isChildOf(child, parent) {
+  if (child.parentNode === parent) {
+    return true;
+  } else if (child.parentNode === null) {
+    return false;
+  } else {
+    return isChildOf(child.parentNode, parent);
+  }
+}
+
+function ui_closestatus()
+{
+    console.log("Popdown status");
+    $("#overlay").remove();
+    $("#statusdialog").remove();
+    eventlog("status", "Popdown status");
+
+    ui_enable();
 }

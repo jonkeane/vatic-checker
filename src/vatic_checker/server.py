@@ -341,5 +341,70 @@ def login(params, postdata):
 
     out['success'] = True
     out['user_guid'] = str(user.guid)
+    out['can_see_status'] = str(user.can_see_status)
 
     return out
+
+@handler()
+def status(userid):
+    """
+    Returns the information needed for status
+    """
+    status = {}
+
+    # TODO: error gracefully if not a UUID?
+
+    user = session.query(model.User)
+    user = user.filter(model.User.guid == userid)
+
+    # TODO: error gracefully if less than one or more than one returned
+    user = user.one()
+
+    # retrieve training status, defaults to false
+    status["can_see_status"] = user.can_see_status
+
+    # check if there are at least N training videos annotated
+    # TODO: should this return a status and have the UI handle this nicely?
+    if status["can_see_status"] == False:
+        logger.error("This user isn't authorized to see the status page.")
+        raise Error500("No access. Please contact the researcher.")
+
+    # find the status information for annotations (similar to cli annotationstats)
+    videos = session.query(model.Video)
+    total_videos = videos.count()
+
+    # grab the users' annotations
+    current_annotations = session.\
+        query(model.User.username, model.User.completed_training).\
+         outerjoin(model.Annotation, model.User.guid == model.Annotation.user_guid).\
+        group_by(model.User.guid).\
+        add_column(
+            func.count(distinct(model.Annotation.video_id).label('annos_current_user')))
+
+    anno_results = session.execute(current_annotations)
+    anno_results_dict = [dict(zip(["username", "completed_training", "annotations_completed"], row)) for row in anno_results]
+
+    status["annotation_results"] = anno_results_dict
+    status["total_videos"] = total_videos
+
+
+    # find the status information for videos (similar to cli videostats)
+    # grab the users' annotations
+    users = session.query(model.User)
+    total_users = users.count()
+
+    # grab the videos' annotations
+    current_videos = session.\
+        query(model.Video.name).\
+         outerjoin(model.Annotation, model.Video.id == model.Annotation.video_id).\
+        group_by(model.Video.name).\
+        add_column(
+            func.count(distinct(model.Annotation.id).label('annos_current_user')))
+
+    video_results = session.execute(current_videos)
+    video_results_dict = [dict(zip(["video_name", "annotations_completed"], row)) for row in video_results]
+
+    status["video_results"] = video_results_dict
+    status["total_users"] = total_users
+
+    return status

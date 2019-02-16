@@ -17,7 +17,7 @@ import database
 import ffmpeg
 import model
 from database import session
-from sqlalchemy import func
+from sqlalchemy import func, distinct
 from PIL import Image
 
 try:
@@ -597,7 +597,7 @@ class importcsv(object):
         print("Completed loading from {0}".format(args.filename))
 
 
-@handler("Adds a new user")
+@handler("get annotation status by user")
 class userannos(object):
     def __init__(self, args):
         args = self.setup().parse_args(args)
@@ -630,3 +630,64 @@ class userannos(object):
 
         print("{0} has already annotated {1} videos.".format(user.username, videos_annoed.filter(subq.c.text != None).count()))
         print("{0} has {1} videos left to annotate.".format(user.username, videos_annoed.filter(subq.c.text == None).count()))
+
+
+@handler("get annotation status")
+class annotationstats(object):
+    def __init__(self, args):
+        args = self.setup().parse_args(args)
+
+        self(args)
+
+    def setup(self):
+        parser = argparse.ArgumentParser(add_help=False)
+        return parser
+
+    def __call__(self, args):
+        # grab the users' annotations
+        videos = session.query(model.Video)
+        total_videos = videos.count()
+
+        # grab the users' annotations
+        current_annotations = session.\
+            query(model.User.username, model.User.completed_training).\
+             outerjoin(model.Annotation, model.User.guid == model.Annotation.user_guid).\
+            group_by(model.User.guid).\
+            add_column(
+                func.count(distinct(model.Annotation.video_id).label('annos_current_user')))
+
+
+        results = session.execute(current_annotations)
+        results_dict = [dict(zip(["username", "completed_training", "annotations_completed"], row)) for row in results]
+
+        print(results_dict)
+
+@handler("get annotation status")
+class videostats(object):
+    def __init__(self, args):
+        args = self.setup().parse_args(args)
+
+        self(args)
+
+    def setup(self):
+        parser = argparse.ArgumentParser(add_help=False)
+        return parser
+
+    def __call__(self, args):
+        # grab the users' annotations
+        users = session.query(model.User)
+        total_users = users.count()
+
+        # grab the videos' annotations
+        current_annotations = session.\
+            query(model.Video.name).\
+             outerjoin(model.Annotation, model.Video.id == model.Annotation.video_id).\
+            group_by(model.Video.name).\
+            add_column(
+                func.count(distinct(model.Annotation.id).label('annos_current_user')))
+
+
+        results = session.execute(current_annotations)
+        results_dict = [dict(zip(["video_name", "annotations_completed"], row)) for row in results]
+
+        print(results_dict)
