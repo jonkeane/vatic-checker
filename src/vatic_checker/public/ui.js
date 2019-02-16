@@ -628,7 +628,9 @@ function ui_showstatus(job)
       // ignore the click. If the status are up, and the click is outside of the
       // status, then close the status.
       if ( ( status_area != null && target !== status_area && !isChildOf(target, status_area) ) &&
-           ( status_button != null && target !== status_button && !isChildOf(target, status_button) ) ) {
+           ( status_button != null && target !== status_button && !isChildOf(target, status_button) ) &&
+           // ignore span elements for sorting
+           target.tagName != "SPAN") {
              ui_closestatus();
       }
     }, false);

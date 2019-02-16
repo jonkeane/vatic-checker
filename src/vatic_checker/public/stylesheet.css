@@ -596,9 +596,9 @@ span.ui-checkboxradio-icon { display: none; }
     position : fixed;
     top : 50px;
     left: 50%;
-    margin-left: -300px; /* Negative half of height. */
-    height : 480px;
-    width : 600px;
+    margin-left: -400px; /* Negative half of height. */
+    height : 600;
+    width : 800px;
     background-color : #fff;
     z-index : 10000000000000;
     padding : 10px;
@@ -635,9 +635,21 @@ span.ui-checkboxradio-icon { display: none; }
     padding-right: 15px;
 }
 
+#video_stats
+{
+    padding-top: 10px;
+}
+
 #video_stats .ui-progressbar
 {
     height: 20px !important;
+}
+
+#video_stat_heading
+{
+    float: left;
+    padding-right: 25px;
+    font-size: 20px;
 }
 
 /* prevents the progress bars inside from beign slightly smaller than their boxes */

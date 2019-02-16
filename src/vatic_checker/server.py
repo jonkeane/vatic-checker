@@ -395,14 +395,14 @@ def status(userid):
 
     # grab the videos' annotations
     current_videos = session.\
-        query(model.Video.name).\
+        query(model.Video.id, model.Video.name).\
          outerjoin(model.Annotation, model.Video.id == model.Annotation.video_id).\
         group_by(model.Video.name).\
         add_column(
             func.count(distinct(model.Annotation.id).label('annos_current_user')))
 
     video_results = session.execute(current_videos)
-    video_results_dict = [dict(zip(["video_name", "annotations_completed"], row)) for row in video_results]
+    video_results_dict = [dict(zip(["video_id", "video_name", "annotations_completed"], row)) for row in video_results]
 
     status["video_results"] = video_results_dict
     status["total_users"] = total_users
