@@ -233,7 +233,8 @@ class TestCLI(TestCase):
     @patch('argparse.ArgumentParser.parse_args',
                 return_value=argparse.Namespace(
                     username="a_brand_newuser",
-                    trained=False
+                    trained=False,
+                    admin=False
                 ))
     def test_newuser(self, mock_args):
         session.reset_mock()
@@ -249,7 +250,8 @@ class TestCLI(TestCase):
     @patch('argparse.ArgumentParser.parse_args',
                 return_value=argparse.Namespace(
                     username="a_newuser",
-                    trained=False
+                    trained=False,
+                    admin=False
                 ))
     def test_newuser_already_exists(self, mock_args):
         session.reset_mock()
@@ -259,3 +261,26 @@ class TestCLI(TestCase):
         session.query.return_value.filter.assert_called_once_with(model.User.username == "a_newuser")
 
         session.add.assert_not_called()
+
+
+    @patch('cli.session', new=session)
+    @patch('argparse.ArgumentParser.parse_args',
+                return_value=argparse.Namespace(
+                    username="a_brand_admin",
+                    trained=True,
+                    admin=True
+                ))
+    def test_newuser_with_args(self, mock_args):
+        session.reset_mock()
+
+        cli.newuser("f")
+
+        # assert that an add and commit were called
+        session.add.assert_called_once()
+        session.commit.assert_called_once()
+
+        # assert the args are set
+        new_user = session.mock_calls[3][1][0]
+        self.assertEqual(new_user.username, "a_brand_admin")
+        self.assertTrue(new_user.completed_training)
+        self.assertTrue(new_user.can_see_status)

@@ -26,7 +26,7 @@ First, we need to create the database itself, which you can do with:
 Now, run `checker setup --database` from the directory you are serving `vatic-checker` from (here: `/var/www/vatic-checker`), which will install all the necessary tables.
 
 # Add users
-To add users, while you are in the directory you have configured (here: `/var/www/vatic-checker`) and you can use the command `checker newuser [username]`. This will create a new user if there isn't already a user with that username. The usernames must be unique, and should only contain letters and numbers.
+To add users, while you are in the directory you have configured (here: `/var/www/vatic-checker`) and you can use the command `checker newuser [username]`. This will create a new user if there isn't already a user with that username. The usernames must be unique, and should only contain letters and numbers. New users can be marked as already trained if you use the flag `--trained` and can be marked as administrators (can see the status page) if you use the flag `--admin`.
 
 You can see what users have been added by using the command `checker users` (again, as always, in the directory where you're serving from, here: `/var/www/vatic-checker`).
 
@@ -54,7 +54,7 @@ This csv must have the following columns. The columns are case sensitive and it 
 * `Video Path` – a path to the video file that will be used. This path must be accessible to the system and user you are running `checker` as for the video to be extracted.
 * `Begin Time - msec` – the number of milliseconds into the larger clip that the fingerspelling started.
 * `End Time - msec` – the number of milliseconds into the larger clip that the fingerspelling ended.
-* `Label` – the label that must be matched for the training to be considered successful. 
+* `Label` – the label that must be matched for the training to be considered successful.
 
 # Add clips to annotate
 You can use the `checker load` command followed by a number of arguments to add one video to be annotated at a time. To use this, you must already have turned the video into frames using the `checker extract` command on the small clip that includes only the fingerspelling. Any of the paths can be quoted in case they include spaces or other characters that might impact bash argument parsing

@@ -392,6 +392,7 @@ class newuser(object):
         parser = argparse.ArgumentParser(add_help=False)
         parser.add_argument("username")
         parser.add_argument("--trained", default=False, action="store_true")
+        parser.add_argument("--admin", default=False, action="store_true")
         return parser
 
     def __call__(self, args):
@@ -408,7 +409,8 @@ class newuser(object):
         user = model.User(
             username=args.username,
             guid=new_guid,
-            completed_training=args.trained
+            completed_training=args.trained,
+            can_see_status=args.admin
             )
 
         session.add(user)
