@@ -109,7 +109,8 @@ function loginscreen()
     $("#loginscreentext").append("<form onsubmit='return false;' id='login'></form>");
     $("#login").append("<div id='usernamelabel'><h3 style='margin-bottom:0px; display:inline-block;'>Username</h3></div>");
     $("#login").append("<div><input id='username' type='text' autocomplete='off'></input></div>");
-    $("#login").append("<div class='g-recaptcha' data-sitekey='6LePuIUUAAAAAIl_cGo2946oqqrLycEbmWAP3AJ-' data-callback='remove_captchafail'></div>")
+    $("#login").append("<div class='g-recaptcha' data-sitekey='6LfFxoUUAAAAAOjnjaXknybhFoNIUBDCvH5IsC-U' data-callback='remove_captchafail'></div>") // ttic key
+    // $("#login").append("<div class='g-recaptcha' data-sitekey='6LePuIUUAAAAAIl_cGo2946oqqrLycEbmWAP3AJ-' data-callback='remove_captchafail'></div>") // testing key
     $("#login").append("<div><button id='loginsubmitbutton' class='button'>Submit</button></div>");
     $("#loginsubmitbutton").button().click(function() {
         if (ui_disabled) return;
